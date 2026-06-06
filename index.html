@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Peeksy — See It Before You Get It</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #050510;
+      --surface: #0d0d22;
+      --blue: #2dd4f7;
+      --purple: #a855f7;
+      --mid: #6e3ff3;
+      --glow-blue: rgba(45,212,247,0.18);
+      --glow-purple: rgba(168,85,247,0.18);
+      --cream: #e8e8ff;
+      --muted: #6b6b99;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated background mesh */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(45,212,247,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(168,85,247,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 60% 80%, rgba(110,63,243,0.06) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Grain */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.5;
+    }
+
+    header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 2.5rem;
+      border-bottom: 1px solid rgba(45,212,247,0.12);
+      backdrop-filter: blur(10px);
+      background: rgba(5,5,16,0.7);
+      animation: fadeDown 0.8s ease forwards;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .logo-img {
+      height: 48px;
+      width: auto;
+      filter: drop-shadow(0 0 12px rgba(45,212,247,0.5));
+    }
+
+    .logo-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0.08em;
+    }
+
+    .tagline-badge {
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid rgba(168,85,247,0.25);
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      background: rgba(168,85,247,0.05);
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - 73px);
+      animation: fadeUp 1s ease 0.2s both;
+    }
+
+    /* LEFT */
+    .info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 3rem 3rem 3rem 4rem;
+      gap: 1.5rem;
+      position: relative;
+    }
+
+    .info::after {
+      content: '';
+      position: absolute;
+      right: 0; top: 8%; bottom: 8%;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(45,212,247,0.25), rgba(168,85,247,0.25), transparent);
+    }
+
+    .eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 28px; height: 1px;
+      background: linear-gradient(to right, var(--blue), var(--purple));
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.15;
+      background: linear-gradient(135deg, var(--cream) 40%, var(--blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .desc {
+      font-size: 0.93rem;
+      line-height: 1.8;
+      color: var(--muted);
+      max-width: 400px;
+      font-weight: 300;
+    }
+
+    .divider {
+      width: 52px;
+      height: 2px;
+      background: linear-gradient(to right, var(--blue), var(--purple), transparent);
+      border-radius: 2px;
+    }
+
+    .features {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 0.85rem;
+      color: var(--cream);
+    }
+
+    .feature-item .icon {
+      width: 28px; height: 28px;
+      background: rgba(45,212,247,0.08);
+      border: 1px solid rgba(45,212,247,0.2);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .chip {
+      font-size: 0.7rem;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      background: rgba(110,63,243,0.1);
+      border: 1px solid rgba(110,63,243,0.25);
+      color: #c4b5fd;
+      letter-spacing: 0.05em;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: linear-gradient(135deg, var(--blue), var(--mid));
+      color: #050510;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      padding: 0.9rem 2rem;
+      border-radius: 6px;
+      text-decoration: none;
+      width: fit-content;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 24px rgba(45,212,247,0.25);
+    }
+
+    .cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 36px rgba(45,212,247,0.4);
+    }
+
+    /* RIGHT — Viewer */
+    .viewer {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .viewer-label {
+      position: absolute;
+      top: 2rem; right: 2rem;
+      font-size: 0.64rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dot {
+      width: 7px; height: 7px;
+      background: var(--blue);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--blue);
+      animation: pulse 2s infinite;
+    }
+
+    .model-wrap {
+      width: 100%;
+      max-width: 540px;
+      aspect-ratio: 1;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(45,212,247,0.15);
+      box-shadow:
+        0 0 0 1px rgba(168,85,247,0.08),
+        0 0 60px rgba(45,212,247,0.08),
+        0 20px 60px rgba(0,0,0,0.7);
+      position: relative;
+    }
+
+    .model-wrap iframe {
+      width: 100%; height: 100%; border: none;
+    }
+
+    /* Corner accents */
+    .model-wrap::before,
+    .model-wrap::after {
+      content: '';
+      position: absolute;
+      width: 20px; height: 20px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .model-wrap::before {
+      top: 0; left: 0;
+      border-top: 2px solid var(--blue);
+      border-left: 2px solid var(--blue);
+      border-radius: 16px 0 0 0;
+    }
+    .model-wrap::after {
+      bottom: 0; right: 0;
+      border-bottom: 2px solid var(--purple);
+      border-right: 2px solid var(--purple);
+      border-radius: 0 0 16px 0;
+    }
+
+    .hint {
+      margin-top: 1rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Floating orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .orb-1 {
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(45,212,247,0.06) 0%, transparent 70%);
+      top: 20%; left: 10%;
+    }
+    .orb-2 {
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 70%);
+      bottom: 15%; right: 5%;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--blue); }
+      50%       { opacity: 0.4; box-shadow: 0 0 3px var(--blue); }
+    }
+
+    @media (max-width: 768px) {
+      .hero { grid-template-columns: 1fr; }
+      .info { padding: 2rem 1.5rem; }
+      .info::after { display: none; }
+      .viewer { padding: 1.5rem; }
+      header { padding: 1rem 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <header>
+    <div class="logo-wrap">
+      <img class="logo-img" src="logo.png" alt="Peeksy"/>
+    </div>
+
+  </header>
+
+  <section class="hero">
+
+    <!-- LEFT -->
+    <div class="info">
+      <div class="eyebrow">QR-Based AR Experience</div>
+      <h1>The Classic<br/>Patio Burger</h1>
+      <div class="divider"></div>
+      <p class="desc">
+        Scan the QR code to see this item in real size — powered by Peeksy's WebAR technology. No app needed, just your camera.
+      </p>
+      <div class="features">
+        <div class="feature-item"><div class="icon">🍔</div> Food appears in actual size on your table</div>
+        <div class="feature-item"><div class="icon">📱</div> No app installation required</div>
+        <div class="feature-item"><div class="icon">⚡</div> Instant browser-based AR experience</div>
+      </div>
+      <div class="chips">
+        <span class="chip">🔥 Flame Grilled</span>
+        <span class="chip">🧀 Aged Cheddar</span>
+        <span class="chip">🍟 Fries Included</span>
+        <span class="chip">⚡ 15 min</span>
+      </div>
+      <button class="cta" onclick="document.getElementById('ar-modal').style.display='flex'">View in AR →</button>
+
+  <!-- Coming Soon Modal -->
+  <div id="ar-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(5,5,16,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;" onclick="this.style.display='none'">
+    <div style="background:#0d0d22;border:1px solid rgba(45,212,247,0.25);border-radius:16px;padding:3rem 2.5rem;text-align:center;max-width:360px;box-shadow:0 0 60px rgba(45,212,247,0.1);" onclick="event.stopPropagation()">
+      <div style="font-size:2.5rem;margin-bottom:1rem;">🚀</div>
+      <div style="font-family:'Orbitron',sans-serif;font-size:1.2rem;font-weight:800;background:linear-gradient(135deg,#2dd4f7,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.8rem;">Coming Soon</div>
+      <p style="font-size:0.85rem;color:#6b6b99;line-height:1.7;">Peeksy AR is currently in development. Soon you'll be able to see this item in real size on your table!</p>
+      <button onclick="document.getElementById('ar-modal').style.display='none'" style="margin-top:1.5rem;padding:0.7rem 2rem;background:linear-gradient(135deg,#2dd4f7,#6e3ff3);border:none;border-radius:6px;color:#050510;font-weight:600;font-size:0.85rem;cursor:pointer;letter-spacing:0.05em;">Got it</button>
+    </div>
+  </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="viewer">
+      <div class="viewer-label">
+        <div class="dot"></div>
+        Interactive 3D Preview
+      </div>
+      <div class="model-wrap">
+        <iframe
+          title="Shakespeare Burger - Patio"
+          frameborder="0"
+          allowfullscreen
+          mozallowfullscreen="true"
+          webkitallowfullscreen="true"
+          allow="autoplay; fullscreen; xr-spatial-tracking"
+          src="https://sketchfab.com/models/fbd45f72d7bc464c9687513a23c3b988/embed?autospin=1&autostart=1&ui_hint=0&ui_watermark=0">
+        </iframe>
+      </div>
+      <p class="hint">↻ &nbsp;Drag to rotate &nbsp;·&nbsp; Scroll to zoom</p>
+    </div>
+
+  </section>
+
+</body>
+</html>
